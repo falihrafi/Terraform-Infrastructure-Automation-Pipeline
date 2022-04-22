@@ -25,7 +25,7 @@ resource "aws_codebuild_project" "codebuild_deployment" {
 
   source {
     type      = "CODEPIPELINE"
-    buildspec = var.code_pipeline_build_stages["build"].value
+    buildspec = var.code_pipeline_build_stages["build"]
   }
 
   tags = var.custom_tags
