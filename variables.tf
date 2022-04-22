@@ -40,16 +40,10 @@ variable "cb_priviledged_mode" {
   default     = "true"
 }
 
-variable "roles" {
-  description = "Roles ARN used to deploy, in case of cross account deployments these roles should thrust the CIDE account"
-  type        = list(any)
-  default     = []
-}
-
-variable "branches" {
-  description = "Branches to be built"
-  type        = list(string)
-  default     = ["dev"]
+variable "branch" {
+  description = "Branch to be built"
+  type        = string
+  default     = "main"
 }
 
 variable "code_pipeline_build_stages" {
@@ -61,40 +55,6 @@ variable "code_pipeline_build_stages" {
 
 variable "codebuild_node_size" {
   default = "BUILD_GENERAL1_SMALL"
-}
-
-variable "proxy_config" {
-  description = "Proxies used by CodeBuild"
-  type = object({
-    HTTP_PROXY  = string
-    HTTPS_PROXY = string
-    NO_PROXY    = string
-    no_proxy    = string
-    https_proxy = string
-    http_proxy  = string
-  })
-  default = {
-    HTTP_PROXY  = ""
-    HTTPS_PROXY = ""
-    no_proxy    = ""
-    https_proxy = ""
-    http_proxy  = ""
-    NO_PROXY    = ""
-  }
-}
-
-variable "priv_vpc_config" {
-  description = "Map of values for private VPC, subnet_ids and security_group_ids are comma separated lists"
-  type = object({
-    vpc_id             = string
-    subnet_ids         = string
-    security_group_ids = string
-  })
-  default = {
-    vpc_id             = ""
-    subnet_ids         = ""
-    security_group_ids = ""
-  }
 }
 
 variable "codebuild_image" {

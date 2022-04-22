@@ -16,17 +16,6 @@ resource "aws_s3_bucket" "codepipeline_bucket" {
   tags = var.custom_tags
 }
 
-resource "aws_s3_bucket_server_side_encryption_configuration" "pipeline_buckets" {
-  for_each = local.buckets_to_lock
-  bucket = each.value
-
-  rule {
-    apply_server_side_encryption_by_default {
-      sse_algorithm     = "aws:kms"
-    }
-  }
-}
-
 resource "aws_s3_bucket_acl" "pipeline_buckets" {
   for_each = local.buckets_to_lock
   bucket = each.value

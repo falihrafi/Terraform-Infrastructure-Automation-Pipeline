@@ -1,9 +1,9 @@
-output "codepipeline_name" {
-  value = values(aws_codepipeline.codepipeline)[*].id
+output "codepipeline_id" {
+  value = aws_codepipeline.codepipeline.id
 }
 
-output "codebuild_name" {
-  value = values(aws_codebuild_project.codebuild_deployment)[*].name
+output "codebuild_id" {
+  value = aws_codebuild_project.codebuild_deployment.id
 }
 
 output "codepipeline_s3_bucket" {
