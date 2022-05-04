@@ -58,5 +58,50 @@ resource "aws_codepipeline" "codepipeline" {
       }
     }
   }
+
+  stage {
+    name = "Approve"
+
+    action {
+      name     = "Approval-${var.git_repository_name}"
+      category = "Approval"
+      owner    = "AWS"
+      provider = "Manual"
+      version  = "1"
+
+      configuration {
+        NotificationArn = aws_sns_topic.notification_topic.arn
+        CustomData = var.approve_comment
+      }
+    }
+  }
+
+  stage {
+    name = "Deploy"
+
+    action {
+      name             = "Deploy-${aws_codebuild_project.codebuild_deployment_deploy.name}"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      version          = "1"
+      run_order        = 1
+      input_artifacts  = ["source_output"]
+      output_artifacts = ["deploy_output"]
+
+      configuration = {
+        ProjectName = aws_codebuild_project.codebuild_deployment_deploy.name
+        EnvironmentVariables = jsonencode([{
+          name  = "ENVIRONMENT"
+          value = var.branch
+          },
+          {
+            name  = "PROJECT_NAME"
+            value = var.account_type
+        }])
+      }
+    }
+  }
+
   tags = var.custom_tags
 }
