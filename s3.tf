@@ -1,18 +1,10 @@
 resource "aws_s3_bucket" "codebuild_bucket" {
-  #checkov:skip=CKV_AWS_21: "Ensure all data stored in the S3 bucket have versioning enabled"
-  #checkov:skip=CKV2_AWS_6: "Ensure that S3 bucket has a Public Access block"
-  #for_each loop not recognised by checkov
   bucket = "${var.pipeline_deployment_bucket_name}-codebuild"
-
   tags = var.custom_tags
 }
 
 resource "aws_s3_bucket" "codepipeline_bucket" {
-  #checkov:skip=CKV_AWS_21: "Ensure all data stored in the S3 bucket have versioning enabled"
-  #checkov:skip=CKV2_AWS_6: "Ensure that S3 bucket has a Public Access block"
-  #for_each loop not recognised by checkov
   bucket = "${var.pipeline_deployment_bucket_name}-codepipeline"
-
   tags = var.custom_tags
 }
 

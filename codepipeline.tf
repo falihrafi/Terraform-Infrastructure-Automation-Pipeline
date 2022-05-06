@@ -1,10 +1,3 @@
-resource "aws_codecommit_repository" "code_repo" {
-  repository_name = var.git_repository_name
-  description     = "Code Repository"
-
-  tags = var.custom_tags
-}
-
 resource "aws_codepipeline" "codepipeline" {
   name     = "${var.git_repository_name}-pipeline"
   role_arn = aws_iam_role.codepipeline_role.arn
