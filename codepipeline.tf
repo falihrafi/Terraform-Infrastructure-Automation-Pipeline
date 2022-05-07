@@ -61,11 +61,6 @@ resource "aws_codepipeline" "codepipeline" {
       owner    = "AWS"
       provider = "Manual"
       version  = "1"
-
-      configuration {
-        NotificationArn = aws_sns_topic.notification_topic.arn
-        CustomData = var.approve_comment
-      }
     }
   }
 

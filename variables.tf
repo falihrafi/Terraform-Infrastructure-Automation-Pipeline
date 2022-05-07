@@ -22,11 +22,6 @@ variable "git_repository_name" {
   type        = string
 }
 
-variable "endpoint_email" {
-  description = "endpoint email for SNS subscription"
-  type = string
-}
-
 ## Optional Variables
 variable "account_id" {
   description = "Account ID where resources will be deployed"
@@ -67,10 +62,4 @@ variable "codebuild_image" {
   description = "CodeBuild image"
   type = string
   default = "aws/codebuild/standard:5.0"
-}
-
-variable "approve_comment" {
-  description = "Comment stated in approval message"
-  type = string
-  default = "There is infrastructure change"
 }
