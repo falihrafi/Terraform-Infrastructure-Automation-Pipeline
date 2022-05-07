@@ -1,13 +1,5 @@
-resource "aws_codecommit_repository" "code_repo" {
-  repository_name = var.git_repository_name
-  description     = "Code Repository"
-
-  tags = var.custom_tags
-}
-
 resource "aws_codepipeline" "codepipeline" {
-  for_each = toset(var.branches)
-  name     = "${var.git_repository_name}-${each.value}"
+  name     = "${var.git_repository_name}-pipeline"
   role_arn = aws_iam_role.codepipeline_role.arn
 
   artifact_store {
@@ -28,7 +20,7 @@ resource "aws_codepipeline" "codepipeline" {
 
       configuration = {
         RepositoryName = var.git_repository_name
-        BranchName     = each.value
+        BranchName     = var.branch
       }
     }
   }
@@ -37,7 +29,7 @@ resource "aws_codepipeline" "codepipeline" {
     name = "Build"
 
     action {
-      name             = "Build-${aws_codebuild_project.codebuild_deployment["build"].name}"
+      name             = "Build-${aws_codebuild_project.codebuild_deployment.name}"
       category         = "Build"
       owner            = "AWS"
       provider         = "CodeBuild"
@@ -47,10 +39,10 @@ resource "aws_codepipeline" "codepipeline" {
       output_artifacts = ["build_output"]
 
       configuration = {
-        ProjectName = aws_codebuild_project.codebuild_deployment["build"].name
+        ProjectName = aws_codebuild_project.codebuild_deployment.name
         EnvironmentVariables = jsonencode([{
           name  = "ENVIRONMENT"
-          value = each.value
+          value = var.branch
           },
           {
             name  = "PROJECT_NAME"
@@ -59,5 +51,45 @@ resource "aws_codepipeline" "codepipeline" {
       }
     }
   }
+
+  stage {
+    name = "Approve"
+
+    action {
+      name     = "Approval-${var.git_repository_name}"
+      category = "Approval"
+      owner    = "AWS"
+      provider = "Manual"
+      version  = "1"
+    }
+  }
+
+  stage {
+    name = "Deploy"
+
+    action {
+      name             = "Deploy-${aws_codebuild_project.codebuild_deployment_deploy.name}"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      version          = "1"
+      run_order        = 1
+      input_artifacts  = ["source_output"]
+      output_artifacts = ["deploy_output"]
+
+      configuration = {
+        ProjectName = aws_codebuild_project.codebuild_deployment_deploy.name
+        EnvironmentVariables = jsonencode([{
+          name  = "ENVIRONMENT"
+          value = var.branch
+          },
+          {
+            name  = "PROJECT_NAME"
+            value = var.account_type
+        }])
+      }
+    }
+  }
+
   tags = var.custom_tags
 }
