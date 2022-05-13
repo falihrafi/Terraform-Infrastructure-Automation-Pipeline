@@ -62,7 +62,7 @@ resource "aws_codepipeline" "codepipeline" {
       provider = "Manual"
       version  = "1"
 
-      configuration {
+      configuration = {
         NotificationArn = aws_sns_topic.notification_topic.arn
         CustomData = var.approve_comment
       }
